@@ -1,0 +1,116 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f7fb">
+  <meta name="description" content="Aplicación local de estudio adaptativo basada en la guía de matemáticas del PDF proporcionado.">
+  <title>MateLab | Estudio adaptativo</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Navegación principal">
+      <a class="brand" href="#inicio" data-action="home" aria-label="Ir al inicio">
+        <span class="brand-mark" aria-hidden="true">M</span>
+        <span class="brand-copy"><strong>MateLab</strong><small>Guía de matemáticas</small></span>
+      </a>
+
+      <nav class="primary-nav" aria-label="Secciones">
+        <button class="nav-link active" type="button" data-action="home"><span aria-hidden="true">⌂</span> Inicio</button>
+        <button class="nav-link" type="button" data-action="review"><span aria-hidden="true">↻</span> Repaso de errores <span id="errorCount" class="nav-count">0</span></button>
+        <button class="nav-link" type="button" data-action="progress"><span aria-hidden="true">▥</span> Mi progreso</button>
+      </nav>
+
+      <div class="side-section-heading"><span>CONTENIDO</span><span class="tiny-dot" aria-hidden="true"></span></div>
+      <div id="topicNav" class="topic-nav"></div>
+
+      <div class="sidebar-bottom">
+        <div class="offline-note"><span aria-hidden="true">●</span><span>Funciona sin conexión</span></div>
+        <p>Contenido basado en el PDF proporcionado.</p>
+      </div>
+    </aside>
+
+    <div class="main-column">
+      <header class="topbar">
+        <div class="breadcrumbs"><span>MateLab</span><span class="crumb-separator">/</span><strong id="pageTitle">Inicio</strong></div>
+        <div class="topbar-actions">
+          <span class="offline-pill"><span></span> Modo local</span>
+          <button id="themeToggle" class="icon-button" type="button" aria-label="Cambiar a modo oscuro" title="Cambiar tema">◐</button>
+          <button class="icon-button reset-button" type="button" data-action="reset" aria-label="Reiniciar progreso" title="Reiniciar progreso">⟲</button>
+        </div>
+      </header>
+
+      <main id="appMain" class="main-content">
+        <section id="homeView" class="view" aria-labelledby="homeHeading">
+          <div class="hero-panel">
+            <div class="hero-copy">
+              <div class="eyebrow"><span class="eyebrow-line"></span> TU ESPACIO DE ESTUDIO</div>
+              <h1 id="homeHeading">Aprende. Practica.<br><span>Domina los temas.</span></h1>
+              <p>Estudia con resúmenes breves y preguntas basadas en tu guía. La dificultad se ajusta a tus resultados y tu avance se guarda en este dispositivo.</p>
+              <div class="hero-actions">
+                <button type="button" class="button button-primary" data-action="continue">Continuar estudiando <span aria-hidden="true">→</span></button>
+                <button type="button" class="button button-secondary" data-action="final-exam">Examen final</button>
+              </div>
+            </div>
+            <div class="hero-art" aria-hidden="true">
+              <div class="orbit orbit-one"></div><div class="orbit orbit-two"></div>
+              <div class="floating-card floating-card-top"><span class="mini-symbol">√</span><span><b>Matemáticas</b><small>Repaso por temas</small></span></div>
+              <div class="formula-card"><span class="formula-main">a × b</span><span class="formula-rule"></span><span class="formula-bottom">paso a paso</span></div>
+              <div class="floating-card floating-card-bottom"><span class="check-mark">✓</span><span><b>Avance guardado</b><small>En este dispositivo</small></span></div>
+            </div>
+          </div>
+
+          <div class="section-heading overview-heading">
+            <div><span class="section-kicker">RESUMEN</span><h2>Tu avance</h2></div>
+            <button type="button" class="text-button" data-action="progress">Ver detalle <span aria-hidden="true">→</span></button>
+          </div>
+          <div class="stats-grid" id="overviewStats"></div>
+
+          <div class="section-heading topic-section-heading">
+            <div><span class="section-kicker">RUTA DE ESTUDIO</span><h2>Elige un tema</h2><p>Abre el resumen o inicia una práctica. Cada intento usa hasta 20 preguntas por tema.</p></div>
+            <button type="button" class="button button-secondary button-small" data-action="final-exam">Evaluar todo el documento</button>
+          </div>
+          <div id="unitsContainer" class="units-container"></div>
+          <div class="source-note"><span class="source-note-icon" aria-hidden="true">i</span><div><strong>Alcance del contenido</strong><p>Los resúmenes y reactivos se han preparado a partir del PDF disponible. Las referencias indican la página del archivo PDF, contando desde la primera página.</p></div></div>
+        </section>
+
+        <section id="studyView" class="view" hidden aria-labelledby="studyHeading">
+          <div id="studyContent"></div>
+        </section>
+
+        <section id="quizView" class="view" hidden aria-labelledby="quizHeading">
+          <div id="quizContent"></div>
+        </section>
+
+        <section id="resultsView" class="view" hidden aria-labelledby="resultsHeading">
+          <div id="resultsContent"></div>
+        </section>
+
+        <section id="reviewView" class="view" hidden aria-labelledby="reviewHeading">
+          <div id="reviewContent"></div>
+        </section>
+
+        <section id="progressView" class="view" hidden aria-labelledby="progressHeading">
+          <div id="progressContent"></div>
+        </section>
+      </main>
+
+      <footer class="app-footer"><span>MateLab · Repaso personal</span><span>HTML · CSS · JavaScript</span></footer>
+    </div>
+  </div>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
+  <dialog id="resetDialog" class="confirm-dialog">
+    <form method="dialog">
+      <div class="dialog-mark" aria-hidden="true">!</div>
+      <h2>¿Reiniciar el progreso?</h2>
+      <p>Se borrarán los intentos, las preguntas utilizadas y los errores guardados en este dispositivo. Esta acción no se puede deshacer.</p>
+      <div class="dialog-actions">
+        <button class="button button-secondary" value="cancel">Cancelar</button>
+        <button class="button button-danger" value="confirm">Reiniciar</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>
